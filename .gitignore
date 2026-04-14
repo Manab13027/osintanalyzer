@@ -1,0 +1,38 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Secrets & API keys
+.env
+.env.*
+credentials.json
+secrets.json
+*.key
+*.pem
+config/secrets.*
+
+# Puppeteer cache
+.cache/
+.local-chromium/
+
+# Uploads / scraped data
+uploads/
+data/
+output/
+*.json
+!package.json
+!package-lock.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

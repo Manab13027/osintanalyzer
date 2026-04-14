@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PHANTOM TRACE v3.0 - Advanced OSINT Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <span class="status-dot green pulse"></span>
+      <span class="header-icon">&#x2014;</span>
+      <span class="header-title">PHANTOM TRACE</span>
+      <span class="header-version">v3.0</span>
+    </div>
+    <div class="header-right">
+      <span class="status-dot green pulse"></span>
+      <span class="system-status">SYSTEM ONLINE</span>
+      <span class="header-divider">|</span>
+      <span class="dashboard-link">&#9678; DASHBOARD</span>
+    </div>
+  </header>
+
+  <!-- SUBTITLE -->
+  <section class="subtitle-section">
+    <p class="subtitle-label">@GLOBAL OSINT FACE FINDER</p>
+    <h1 class="main-title">Recon Command Center</h1>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+      <!-- Connection Diagnostics -->
+      <div id="diagBox" style="background:#0a0c16;border:1px solid #f59e0b;border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:11px;font-family:monospace;display:none;">
+        <div style="color:#f59e0b;font-weight:700;margin-bottom:6px;">CONNECTION DIAGNOSTICS</div>
+        <div>Page URL: <span id="diagPageUrl" style="color:#00e5ff;"></span></div>
+        <div>API target: <span id="diagApiUrl" style="color:#00e5ff;"></span></div>
+        <div>Server ping: <span id="diagPing" style="color:#fbbf24;">testing...</span></div>
+        <div style="margin-top:6px;color:#f59e0b;" id="diagAdvice"></div>
+      </div>
+
+      <!-- System Status -->
+      <div class="system-status-card">
+        <div class="status-row">
+          <span class="status-label">System Status:</span>
+          <span class="status-value" id="systemStatus">Initializing...</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">AI Model:</span>
+          <span class="status-value" id="proxyCount">—</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Face Models:</span>
+          <span class="status-value" id="queueCount">—</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Tor Proxy:</span>
+          <span class="status-value" id="torStatus">—</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">VPN:</span>
+          <span class="status-value" id="vpnStatus">—</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Last Search:</span>
+          <span class="status-value" id="lastSearch">Never</span>
+        </div>
+      </div>
+
+      <!-- Blueprint Status -->
+      <div class="blueprint-status" id="blueprintStatus">
+        <span class="status-dot yellow pulse"></span>
+        <span>No Blueprint — Upload Photos First</span>
+      </div>
+
+      <!-- Subject Photos -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <span class="panel-icon">&#x1F4F7;</span>
+          <span>SUBJECT PHOTOS</span>
+        </div>
+        <div class="upload-zone" id="uploadZone">
+          <div class="upload-preview" id="uploadPreview"></div>
+          <div class="upload-placeholder" id="uploadPlaceholder">
+            <div class="upload-icon">&#x2601;</div>
+            <p class="upload-text">Drop photos here or click to browse</p>
+            <p class="upload-hint">JPG, PNG, WEBP — optional. Name-only search is supported.</p>
+          </div>
+          <input type="file" id="fileInput" multiple accept=".jpg,.jpeg,.png,.webp" hidden>
+        </div>
+        <div class="image-analysis-container" id="imageAnalysisContainer" style="display: none;">
+          <div class="panel-header">
+            <span class="panel-icon">&#x1F9E0;</span>
+            <span>IMAGE ANALYSIS</span>
+          </div>
+          <div class="analysis-results" id="analysisResults"></div>
+        </div>
+      </div>
+
+      <!-- Search Parameters -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <span class="panel-icon">&#x2699;</span>
+          <span>SEARCH PARAMETERS</span>
+        </div>
+
+        <div class="param-group">
+          <label class="param-label">TARGET NAME / KEYWORDS</label>
+          <input type="text" class="text-input" id="targetName" placeholder="Full name, alias, username...">
+        </div>
+
+        <div class="param-group toggle-row">
+          <div>
+            <div class="toggle-title">Platform Profile Search</div>
+            <div class="toggle-desc">Search 80+ social platforms by name</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="profileSearch" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="param-group toggle-row">
+          <div>
+            <div class="toggle-title">Reverse Image Search</div>
+            <div class="toggle-desc">Google, Yandex, Bing, Baidu, TinEye, SauceNAO, Search4Faces</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="reverseImage" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="param-group toggle-row">
+          <div>
+            <div class="toggle-title">Phantom Mode</div>
+            <div class="toggle-desc">Extended search — Chinese, Indian, Russian platforms</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="godsEyeMode">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="param-group">
+          <div class="threshold-header">
+            <label class="param-label">FACE SIMILARITY THRESHOLD</label>
+            <span class="threshold-value" id="thresholdValue">0.45</span>
+          </div>
+          <div class="slider-labels">
+            <span>Loose (0.2)</span>
+            <span>Strict (0.8)</span>
+          </div>
+          <input type="range" class="range-slider" id="thresholdSlider" min="0.2" max="0.8" step="0.01" value="0.45">
+        </div>
+
+        <button class="search-btn" id="searchBtn" disabled>
+          <span class="lock-icon">&#x1F512;</span>
+          ENTER NAME OR UPLOAD PHOTO
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+      <div class="panel-card platforms-card">
+        <div class="panel-header platforms-header">
+          <div>
+            <span class="panel-icon">&#x1F50D;</span>
+            <span>SEARCH PLATFORMS</span>
+          </div>
+          <div class="all-none-btns">
+            <button class="all-none-btn" id="selectAll">All</button>
+            <button class="all-none-btn" id="selectNone">None</button>
+          </div>
+        </div>
+
+        <div class="platforms-container" id="platformsContainer">
+          <!-- Dynamically populated by app.js -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- RESULTS MODAL -->
+  <div class="modal" id="resultsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Search Results</h2>
+        <button class="close-btn" id="closeResultsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="results-summary" id="resultsSummary"></div>
+        <div class="results-tabs">
+          <button class="tab-btn active" data-tab="news">News</button>
+          <button class="tab-btn" data-tab="profiles">Profiles</button>
+          <button class="tab-btn" data-tab="analysis">Analysis</button>
+          <button class="tab-btn" data-tab="prediction">Prediction</button>
+        </div>
+        <div class="results-content">
+          <div class="tab-content active" id="newsTab">
+            <div class="results-container" id="newsResults"></div>
+          </div>
+          <div class="tab-content" id="profilesTab">
+            <div class="results-container" id="profilesResults"></div>
+          </div>
+          <div class="tab-content" id="analysisTab">
+            <div class="results-container" id="analysisResultsTab"></div>
+          </div>
+          <div class="tab-content" id="predictionTab">
+            <div class="results-container" id="predictionResults"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="export-btn" id="exportResults">
+          <i class="fas fa-download"></i> Export Results
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS MODAL -->
+  <div class="modal" id="settingsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Settings</h2>
+        <button class="close-btn" id="closeSettingsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-tabs">
+          <button class="tab-btn active" data-settings-tab="general">General</button>
+          <button class="tab-btn" data-settings-tab="proxies">Proxies</button>
+          <button class="tab-btn" data-settings-tab="advanced">Advanced</button>
+        </div>
+        <div class="settings-content">
+          <div class="tab-content active" id="generalSettings">
+            <div class="param-group">
+              <label class="param-label">Default Search Mode</label>
+              <select class="select-input" id="defaultSearchMode">
+                <option value="balanced">Balanced</option>
+                <option value="fast">Fast</option>
+                <option value="thorough">Thorough</option>
+              </select>
+            </div>
+            <div class="param-group">
+              <label class="param-label">Max Concurrent Searches</label>
+              <input type="number" class="number-input" id="maxConcurrentSearches" min="1" max="20" value="5">
+            </div>
+            <div class="param-group">
+              <label class="param-label">Auto-save Results</label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="autoSaveResults" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="tab-content" id="proxiesSettings">
+            <div class="param-group">
+              <label class="param-label">Proxy Rotation Interval (minutes)</label>
+              <input type="number" class="number-input" id="proxyRotationInterval" min="1" max="60" value="10">
+            </div>
+            <div class="param-group">
+              <label class="param-label">Enable Tor</label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="enableTor">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="param-group">
+              <label class="param-label">Proxy List</label>
+              <textarea class="textarea-input" id="proxyList" rows="5" placeholder="Enter proxies in format: host:port:type"></textarea>
+            </div>
+            <button class="btn" id="testProxies">Test Proxies</button>
+          </div>
+          <div class="tab-content" id="advancedSettings">
+            <div class="param-group">
+              <label class="param-label">Request Timeout (seconds)</label>
+              <input type="number" class="number-input" id="requestTimeout" min="5" max="60" value="30">
+            </div>
+            <div class="param-group">
+              <label class="param-label">Max Retry Attempts</label>
+              <input type="number" class="number-input" id="maxRetryAttempts" min="1" max="10" value="3">
+            </div>
+            <div class="param-group">
+              <label class="param-label">Debug Mode</label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="debugMode">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn primary" id="saveSettings">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS MODAL -->
+  <div class="modal" id="progressModal">
+    <div class="modal-content progress-modal">
+      <div class="modal-header">
+        <h2>Search in Progress</h2>
+      </div>
+      <div class="modal-body">
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-text" id="progressText">Initializing search...</div>
+        </div>
+        <div class="search-status" id="searchStatus"></div>
+        <div class="search-details" id="searchDetails"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn secondary" id="cancelSearch">Cancel Search</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
